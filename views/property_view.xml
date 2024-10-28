@@ -77,9 +77,9 @@
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">
-                <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
-                <field name="message_ids" widget="mail_thread"/>
-                <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                    <field name="activity_ids" widget="mail_activity"/>
                 </div>
             </form>
         </field>
@@ -106,6 +106,17 @@
         <field name="name">properties</field>
         <field name="res_model">property</field>
     </record>
+
+<!--    i am adding actions in action list -->
+     <record id="property_closed_action_server_module" model="ir.actions.server">
+            <field name="name">Closed</field>
+            <field name="model_id" ref="model_property" />
+     <!-- This means that the code will be applied to this table(property) and will add the action to the actions list.-->
+            <field name="binding_model_id" ref="model_property" />
+            <field name="state">code</field>
+            <field name="code">
+            action = records.set_to_closed()</field>
+     </record>
 
 
 

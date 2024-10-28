@@ -7,24 +7,25 @@ class Property(models.Model):
     _name = 'property'
     _description = 'Property'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    name = fields.Char(required=1, default='New')
+    name = fields.Char(required=1, default='New',track_visibility='always')
     description = fields.Text(track_visibility='always')
-    postcode = fields.Char(required=1, size=4)
-    date_availability = fields.Date()
-    expected_price = fields.Float()
-    selling_price = fields.Float()
-    diff = fields.Float(compute='_compute_diff', store=1)
-    bedrooms = fields.Integer(size=1)
-    living_area = fields.Integer(size=1)
-    facades = fields.Integer()
-    garage = fields.Boolean()
-    garden = fields.Boolean()
-    garden_area = fields.Integer(size=3)
-    owner_id = fields.Many2one("owner", required=1)
-    tag_ids = fields.Many2many("tag")
-    line_ids = fields.One2many("property.line", "property_id")
-    owner_phone = fields.Char(related='owner_id.phone')
-    owner_address = fields.Char(related='owner_id.address')
+    postcode = fields.Char(required=1, size=4,track_visibility='always')
+    date_availability = fields.Date(track_visibility='always')
+    expected_price = fields.Float(track_visibility='always')
+    selling_price = fields.Float(track_visibility='always')
+    diff = fields.Float(compute='_compute_diff', store=1,track_visibility='always')
+    bedrooms = fields.Integer(size=1, track_visibility='always')
+    living_area = fields.Integer(size=1, track_visibility='always')
+    facades = fields.Integer(track_visibility='always')
+    garage = fields.Boolean(track_visibility='always')
+    garden = fields.Boolean(track_visibility='always')
+    garden_area = fields.Integer(size=3,track_visibility='always')
+    owner_id = fields.Many2one("owner", required=1,track_visibility='always')
+    tag_ids = fields.Many2many("tag",track_visibility='always')
+    line_ids = fields.One2many("property.line", "property_id",track_visibility='always')
+    owner_phone = fields.Char(related='owner_id.phone',track_visibility='always')
+    owner_address = fields.Char(related='owner_id.address',track_visibility='always')
+    active = fields.Boolean(default=True)
 
     garden_orientation = fields.Selection([
         ('north', 'North'),
@@ -35,8 +36,9 @@ class Property(models.Model):
     status = fields.Selection([
         ('draft', 'Draft'),
         ('pending', 'Pending'),
-        ('sold', 'Sold')
-    ] ,default="draft")
+        ('sold', 'Sold'),
+        ('closed', 'Closed')
+    ] ,default="draft",track_visibility='always')
     _sql_constraints = [
         ('unique_name', 'unique("name")', 'This Name Already is Exist'),
         ('unique_postcode', 'unique("postcode")', 'This postcode is Already Exist')
@@ -89,6 +91,10 @@ class Property(models.Model):
     def set_to_sold(self):
         for rec in self:
             rec.status = "sold"
+
+    def set_to_closed(self):
+        for rec in self:
+            rec.status = "closed"
 
 class PropertyLine(models.Model):
     _name = 'property.line'
