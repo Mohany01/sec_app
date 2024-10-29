@@ -12,6 +12,8 @@ class Property(models.Model):
     postcode = fields.Char(required=1, size=4,track_visibility='always')
     date_availability = fields.Date(track_visibility='always')
     expected_price = fields.Float(track_visibility='always')
+    expected_selling_date = fields.Date(track_visibility='always')
+    is_late = fields.Boolean()
     selling_price = fields.Float(track_visibility='always')
     diff = fields.Float(compute='_compute_diff', store=1,track_visibility='always')
     bedrooms = fields.Integer(size=1, track_visibility='always')
@@ -63,11 +65,11 @@ class Property(models.Model):
         print("CREATE Methode")
         return res
 
-    @api.model
-    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
-        res = super(Property, self)._search(args, offset=0, limit=None, order=None, count=False, access_rights_uid=None)
-        print("READ Methode")
-        return res
+    # @api.model
+    # def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+    #     res = super(Property, self)._search(args, offset=0, limit=None, order=None, count=False, access_rights_uid=None)
+    #     print("READ Methode")
+    #     return res
 
     def write(self, vals):
         res = super(Property, self).write(vals)
@@ -95,6 +97,16 @@ class Property(models.Model):
     def set_to_closed(self):
         for rec in self:
             rec.status = "closed"
+
+    # this method automation action
+    def check_expected_selling_date(self):
+        print(self)
+        properties = self.search([])
+        for rec in properties :
+            if rec.expected_selling_date and rec.expected_selling_date < fields.date.today() :
+                rec.is_late = True
+                rec.status = 'closed'
+
 
 class PropertyLine(models.Model):
     _name = 'property.line'
